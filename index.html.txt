@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotional Healing Diary Story</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            background-color: #87CEEB;
+        }
+
+        /* Container สำหรับทำ Scroll Story */
+        .story-container {
+            height: 300vh; /* ความสูงเพื่อให้เกิดการ Scroll 3 หน้าจอ */
+            position: relative;
+        }
+
+        .scene-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: background 0.8s ease;
+        }
+
+        /* องค์ประกอบฉากหลัง */
+        .sky {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
+            z-index: 1;
+            transition: background 0.8s ease;
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.8;
+            animation: floatClouds 20s infinite linear;
+        }
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+        .c1 { width: 120px; height: 40px; top: 15%; left: -150px; }
+        .c1::before { width: 50px; height: 50px; top: -25px; left: 20px; }
+        .c1::after { width: 70px; height: 70px; top: -35px; left: 50px; }
+
+        .c2 { width: 180px; height: 60px; top: 30%; right: -200px; animation-duration: 25s; animation-direction: reverse; }
+        .c2::before { width: 70px; height: 70px; top: -35px; left: 30px; }
+        .c2::after { width: 90px; height: 90px; top: -45px; left: 80px; }
+
+        @keyframes floatClouds {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(100vw + 300px)); }
+        }
+
+        /* พื้นหญ้า */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 35%;
+            background: #76c753;
+            border-radius: 50% 50% 0 0 / 20% 20% 0 0;
+            z-index: 2;
+            transition: background 0.8s ease;
+        }
+
+        /* เม็ดฝน (ฉากที่ 2) */
+        .rain-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .raindrop {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            width: 2px;
+            height: 20px;
+            animation: fall 0.7s infinite linear;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-20px); }
+            100% { transform: translateY(100vh); }
+        }
+
+        /* ต้นไม้และดอกไม้ (ฉากที่ 3) */
+        .flora-container {
+            position: absolute;
+            bottom: 10%;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            z-index: 4;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding: 0 10%;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 1s ease;
+        }
+
+        .flower {
+            width: 40px;
+            height: 100px;
+            position: relative;
+            transform-origin: bottom;
+            animation: growFlower 1.5s ease forwards;
+        }
+        .stem {
+            width: 4px;
+            height: 80px;
+            background: #2e7d32;
+            position: absolute;
+            bottom: 0;
+            left: 18px;
+        }
+        .bloom {
+            width: 30px;
+            height: 30px;
+            background: #ffeb3b;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 5px;
+            box-shadow: 0 0 10px #ff9800;
+        }
+
+        .tree {
+            width: 80px;
+            height: 160px;
+            position: relative;
+        }
+        .tree-trunk {
+            width: 16px;
+            height: 90px;
+            background: #795548;
+            position: absolute;
+            bottom: 0;
+            left: 32px;
+        }
+        .tree-leaves {
+            width: 90px;
+            height: 90px;
+            background: #4caf50;
+            border-radius: 50%;
+            position: absolute;
+            top: 10px;
+            left: -5px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        /* การ์ดอารมณ์ลอยไปมาบนท้องฟ้า (ฉากที่ 3) */
+        .cards-container {
+            position: absolute;
+            top: 15%;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            z-index: 5;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 5%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        .emotion-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            cursor: pointer;
+            text-align: center;
+            animation: floatCard 4s infinite ease-in-out alternate;
+            transition: transform 0.3s, background 0.3s;
+            pointer-events: auto;
+        }
+        .emotion-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            background: #fff;
+        }
+        .emotion-card h3 { font-size: 1.1rem; color: #333; margin-bottom: 5px; }
+        .emotion-card p { font-size: 0.85rem; color: #666; }
+
+        @keyframes floatCard {
+            0% { transform: translateY(0px) rotate(-2deg); }
+            100% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        /* คำแนะนำ Scroll ด้านล่าง */
+        .scroll-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            color: white;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
+            40% {transform: translateY(-10px) translateX(-50%);}
+            60% {transform: translateY(-5px) translateX(-50%);}
+        }
+
+        /* Modal Diary & หน้าต่างบันทึกความรู้สึก */
+        .diary-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: scale(0.9);
+        }
+        .diary-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        .diary-box {
+            background: white;
+            width: 90%;
+            max-width: 550px;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+            text-align: center;
+        }
+
+        .diary-box h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .diary-box p.subtitle {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .diary-box textarea {
+            width: 100%;
+            height: 130px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s;
+            margin-bottom: 15px;
+        }
+        .diary-box textarea:focus {
+            border-color: #4facfe;
+        }
+
+        /* วงกลมหายใจลดความเครียด (Soothing Shape) */
+        .breathing-shape-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .breathe-circle {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            border-radius: 50%;
+            animation: breathe 4s infinite alternate ease-in-out;
+            margin-bottom: 8px;
+        }
+        @keyframes breathe {
+            0% { transform: scale(1); background: #a1c4fd; }
+            100% { transform: scale(1.4); background: #84fab0; }
+        }
+        .breathe-text { font-size: 0.8rem; color: #555; }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95rem;
+            transition: opacity 0.2s;
+        }
+        .btn-save { background: #4facfe; color: white; }
+        .btn-close { background: #e2e8f0; color: #4a5568; }
+        .btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <div class="story-container">
+        <div class="scene-fixed" id="scene">
+            <!-- ท้องฟ้า -->
+            <div class="sky" id="skyBg">
+                <div class="cloud c1"></div>
+                <div class="cloud c2"></div>
+            </div>
+
+            <!-- เม็ดฝน -->
+            <div class="rain-container" id="rainContainer"></div>
+
+            <!-- การ์ดอารมณ์ลอยฟ้า -->
+            <div class="cards-container" id="cardsContainer">
+                <div class="emotion-card" onclick="openDiary('Tired 🥱', 'รู้สึกเหนื่อยล้า วันนี้เจออะไรมาเยอะ พักผ่อนสูดหายใจลึกๆ นะ')">
+                    <h3>🥱 เหนื่อยล้า</h3>
+                    <p>คลิกเพื่อระบายความรู้สึก</p>
+                </div>
+                <div class="emotion-card" onclick="openDiary('Anxious 🌧️', 'มีความกังวลใจ ปล่อยให้สายฝนชะล้างความเครียดออกไปเถอะนะ')">
+                    <h3>🌧️ กังวลใจ</h3>
+                    <p>คลิกเพื่อระบายความรู้สึก</p>
+                </div>
+                <div class="emotion-card" onclick="openDiary('Peaceful 🌿', 'ใจสงบและผ่อนคลาย ดื่มด่ำกับธรรมชาติรอบตัว')">
+                    <h3>🌿 สงบและผ่อนคลาย</h3>
+                    <p>คลิกเพื่อระบายความรู้สึก</p>
+                </div>
+            </div>
+
+            <!-- พื้นหญ้า -->
+            <div class="ground" id="groundBg"></div>
+
+            <!-- ต้นไม้และดอกไม้โตขึ้น -->
+            <div class="flora-container" id="floraContainer">
+                <div class="flower"><div class="stem"></div><div class="bloom" style="background:#ff80ab;"></div></div>
+                <div class="tree"><div class="tree-trunk"></div><div class="tree-leaves" style="background:#81c784;"></div></div>
+                <div class="flower" style="animation-delay: 0.2s;"><div class="stem"></div><div class="bloom" style="background:#ffd54f;"></div></div>
+                <div class="tree"><div class="tree-trunk"></div><div class="tree-leaves" style="background:#aed581;"></div></div>
+                <div class="flower" style="animation-delay: 0.4s;"><div class="stem"></div><div class="bloom" style="background:#ba68c8;"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-hint" id="scrollHint">📜 เลื่อนเมาส์ลง (Scroll) เพื่อดูเรื่องราวต่อ...</div>
+
+    <!-- Modal Diary -->
+    <div class="diary-modal" id="diaryModal">
+        <div class="diary-box">
+            <h2 id="diaryTitle">บันทึกความรู้สึก</h2>
+            <p class="subtitle" id="diarySubtitle">เขียนระบายความรู้สึกของคุณลงในสมุดบันทึกนี้ได้เลย</p>
+            
+            <!-- รูปร่างช่วยคลายเครียด -->
+            <div class="breathing-shape-container">
+                <div class="breathe-circle"></div>
+                <span class="breathe-text">หายใจเข้า... หายใจออก... ช้าๆ ตามจังหวะวงกลมนี้</span>
+            </div>
+
+            <textarea id="diaryInput" placeholder="พิมพ์ความรู้สึกหรือเรื่องราววันนี้ที่นี่..."></textarea>
+            
+            <div class="btn-group">
+                <button class="btn btn-save" onclick="saveDiary()">บันทึกความรู้สึก</button>
+                <button class="btn btn-close" onclick="closeDiary()">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const skyBg = document.getElementById('skyBg');
+        const rainContainer = document.getElementById('rainContainer');
+        const cardsContainer = document.getElementById('cardsContainer');
+        const floraContainer = document.getElementById('floraContainer');
+        const scrollHint = document.getElementById('scrollHint');
+        const diaryModal = document.getElementById('diaryModal');
+        const diaryTitle = document.getElementById('diaryTitle');
+        const diarySubtitle = document.getElementById('diarySubtitle');
+        const diaryInput = document.getElementById('diaryInput');
+
+        // สร้างเม็ดฝน
+        for (let i = 0; i < 60; i++) {
+            let drop = document.createElement('div');
+            drop.className = 'raindrop';
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.top = (Math.random() * -50) + 'px';
+            drop.style.animationDuration = (0.5 + Math.random() * 0.5) + 's';
+            drop.style.animationDelay = (Math.random() * 2) + 's';
+            rainContainer.appendChild(drop);
+        }
+
+        // จัดการ Scroll Storyตามระยะความสูงหน้าจอ
+        window.addEventListener('scroll', () => {
+            let scrollY = window.scrollY;
+            let maxScroll = document.body.scrollHeight - window.innerHeight;
+            let scrollPercent = scrollY / maxScroll;
+
+            if (scrollPercent < 0.35) {
+                // ฉากที่ 1: หน้าแรก (ฟ้าใส หญ้าเขียว)
+                skyBg.style.background = 'linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%)';
+                rainContainer.style.opacity = '0';
+                floraContainer.style.opacity = '0';
+                floraContainer.style.transform = 'scale(0.8)';
+                cardsContainer.style.opacity = '0';
+                cardsContainer.style.pointerEvents = 'none';
+                scrollHint.innerText = '📜 เลื่อนลงเพื่อสัมผัสสายฝน...';
+            } 
+            else if (scrollPercent >= 0.35 && scrollPercent < 0.7) {
+                // ฉากที่ 2: ฝนตก
+                skyBg.style.background = 'linear-gradient(to bottom, #3a6073 0%, #16222a 100%)';
+                rainContainer.style.opacity = '1';
+                floraContainer.style.opacity = '0';
+                cardsContainer.style.opacity = '0';
+                cardsContainer.style.pointerEvents = 'none';
+                scrollHint.innerText = '📜 เลื่อนลงเพื่อดูธรรมชาติเติบโต...';
+            } 
+            else {
+                // ฉากที่ 3: ฝนหยุด ดอกไม้โต + การ์ดลอย
+                skyBg.style.background = 'linear-gradient(to bottom, #89f7fe 0%, #66a6ff 100%)';
+                rainContainer.style.opacity = '0';
+                floraContainer.style.opacity = '1';
+                floraContainer.style.transform = 'scale(1)';
+                cardsContainer.style.opacity = '1';
+                cardsContainer.style.pointerEvents = 'auto';
+                scrollHint.innerText = '✨ คลิกเลือกการ์ดอารมณ์ด้านบนเพื่อเขียน Diary ได้เลย!';
+            }
+        });
+
+        // เปิด-ปิด Modal Diary
+        function openDiary(emotionName, subtitleText) {
+            diaryTitle.innerText = `บันทึกอารมณ์: ${emotionName}`;
+            diarySubtitle.innerText = subtitleText;
+            diaryModal.classList.add('active');
+        }
+
+        function closeDiary() {
+            diaryModal.classList.remove('active');
+            diaryInput.value = '';
+        }
+
+        function saveDiary() {
+            if(diaryInput.value.trim() === "") {
+                alert("กรุณากรอกข้อความความรู้สึกก่อนบันทึกนะคะ");
+                return;
+            }
+            alert("บันทึกความรู้สึกของคุณเรียบร้อยแล้ว ขอให้วันนี้เป็นวันที่ดีนะคับ 💚");
+            closeDiary();
+        }
+    </script>
+</body>
+</html>
